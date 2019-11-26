@@ -1,31 +1,31 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <div class="form-item">
+      <span>弹窗标题</span>
+      <input v-model="title"/>
+    </div>
+    <div class="form-item">
+      <span>弹窗内容</span>
+      <input v-model="content"/>
+    </div>
+    <div class="form-item">
+      <span>取消文案</span>
+      <input v-model="cancelText"/>
+    </div>
+    <div class="form-item">
+      <span>确认文案</span>
+      <input v-model="confirmText"/>
+    </div>
+
+    <button @click="isShowModal=true">点击打开Dialog</button>
+
+    <v-dialog
+      v-if="isShowModal"
+      :title="title"
+      :content="content"
+      :cancelText="cancelText"
+      :confirmText="confirmText"
+      :on-cancel="handelCancel"></v-dialog>
   </div>
 </template>
 
@@ -34,6 +34,20 @@ export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      isShowModal: false,
+      title: '弹窗标题',
+      content: '弹窗内容',
+      cancelText: '取消',
+      confirmText: '确认',
+    }
+  },
+  methods: {
+    handelCancel() {
+      this.isShowModal = false
+    }
   }
 }
 </script>
