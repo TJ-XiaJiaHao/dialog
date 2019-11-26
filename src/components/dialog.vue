@@ -1,27 +1,51 @@
+<!--
+  弹窗组件
+  @params title {String} 弹窗标题，可通过名字为title的slot替换
+  @params content {String} 弹窗内容，支持html字符串，可通过名字为content的slot替换
+  @params cancelText {String} 取消按钮文案
+  @params confirmText {String} 确认按钮文案
+  @params onCancel {Function} 点击取消按钮的执行函数
+  @params onConfirm {Function} 点击确认按钮的执行函数
+  @params visible {Boolean} 控制弹窗是否显示
+-->
 <template>
-  <div class="dialog" @click="handelCancel">
-    <div class="dialog-container" @click.stop="">
-      <div class="dialog-container__title">{{title}}</div>
-      <div class="dialog-container__content">{{content}}</div>
-      <div class="dialog-container__btns">
-        <div
-          v-if="cancelText"
-          class="dialog-container__btn cancel"
-          @click="handelCancel">{{cancelText}}</div>
-        <div
-          v-if="confirmText"
-          class="dialog-container__btn confirm"
-          @click="handleConfirm">{{confirmText}}</div>
+  <transition name="modal-fade" v-if="visible">
+    <div class="dialog" @click.self="handelCancel">
+      <div class="dialog-container">
+        <!-- 标题 slot -->
+        <slot name="title">
+          <div class="dialog-container__title">{{title}}</div>
+        </slot>
+
+        <!-- 内容 slot -->
+        <slot name="content">
+          <div class="dialog-container__content" v-html="content"/>
+        </slot>
+
+        <!-- 按钮 slot -->
+        <slot name="footer">
+          <div class="dialog-container__btns">
+            <div
+              v-if="cancelText"
+              class="dialog-container__btn cancel"
+              @click="handelCancel">{{cancelText}}</div>
+            <div
+              v-if="confirmText"
+              class="dialog-container__btn confirm"
+              @click="handleConfirm">{{confirmText}}</div>
+          </div>
+        </slot>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
 export default {
   props: {
-    title: { type: String, default: '' },
-    content: { type: String, default: '' },
+    visible: { type: Boolean, default: false },
+    title: { type: String, default: '弹窗标题' },
+    content: { type: String, default: '内容' },
     cancelText: { type: String, default: '取消' },
     confirmText: { type: String, default: '确认' },
     onCancel: { type: Function, default: null },
@@ -29,16 +53,27 @@ export default {
   },
   methods: {
     handelCancel() {
-      this.onCancel && this.onCancel()
+      if (this.onCancel) {
+        this.onCancel()
+      }
     },
     handleConfirm() {
-      this.onConfirm && this.onConfirm()
+      if (this.onConfirm) {
+        this.onConfirm()
+      }
     }
   }
 }
 </script>
 
 <style>
+.modal-fade-enter-active, .modal-fade-leave-active {
+  transition: opacity ease-out .2s;
+}
+
+.modal-fade-enter, .modal-fade-leave-to {
+  opacity: 0;
+}
 .dialog {
   width: 100vw;
   height: 100vh;
@@ -51,8 +86,11 @@ export default {
   justify-content: center;
 }
 .dialog-container {
-  width: 400px;
-  border-radius: 10px;
+  min-width: 300px;
+  max-width: 400px;
+  max-height: 80%;
+  overflow-y: auto;
+  border-radius: 6px;
   background: #ffffff;
   padding: 16px;
   box-sizing: border-box;
@@ -78,13 +116,15 @@ export default {
   line-height: 36px;
   text-align: center;
   cursor: pointer;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 .dialog-container__btn.confirm {
   background: #589ef8;
-  border-radius: 6px;
   color: #ffffff;
 }
 .dialog-container__btn.cancel {
-  color: red;
+  color: #FF6188;
+  border: 1px solid #FF6188;
 }
 </style>

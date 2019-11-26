@@ -1,31 +1,25 @@
 <template>
   <div class="hello">
-    <div class="form-item">
-      <span>弹窗标题</span>
-      <input v-model="title"/>
-    </div>
-    <div class="form-item">
-      <span>弹窗内容</span>
-      <input v-model="content"/>
-    </div>
-    <div class="form-item">
-      <span>取消文案</span>
-      <input v-model="cancelText"/>
-    </div>
-    <div class="form-item">
-      <span>确认文案</span>
-      <input v-model="confirmText"/>
-    </div>
+    <button class="btn" @click="openNormalModal">普通弹窗</button>
+    <button class="btn" @click="openHiglightModal">高亮弹窗内容</button>
+    <button class="btn" @click="openNoTitleModal">自定义标题样式</button>
+    <button class="btn" @click="openStopCancelModal">拦截取消操作</button>
+    <button class="btn" @click="openNoCancelModal">隐藏取消按钮</button>
 
-    <button @click="isShowModal=true">点击打开Dialog</button>
 
     <v-dialog
-      v-if="isShowModal"
+      :visible.sync="isShowModal"
       :title="title"
       :content="content"
       :cancelText="cancelText"
       :confirmText="confirmText"
-      :on-cancel="handelCancel"></v-dialog>
+      :on-cancel="handelCancel"
+      :on-confirm="handleConfirm">
+      <em
+        class="custom-title"
+        slot="title"
+        v-if="isCustomTitle">自定义标题内容槽</em>
+    </v-dialog>
   </div>
 </template>
 
@@ -38,15 +32,62 @@ export default {
   data() {
     return {
       isShowModal: false,
-      title: '弹窗标题',
-      content: '弹窗内容',
-      cancelText: '取消',
-      confirmText: '确认',
+      title: '',
+      content: '',
+      cancelText: '',
+      confirmText: '',
+      isCustomTitle: false,
+      isStopCancel: false,
     }
   },
   methods: {
     handelCancel() {
+      if (this.isStopCancel) {
+        this.cancelText = '再次点击取消'
+        this.isStopCancel = false
+        return
+      }
       this.isShowModal = false
+      this.isCustomTitle = false
+    },
+    handleConfirm() {
+      this.isShowModal = false
+      this.isCustomTitle = false
+    },
+    openNormalModal() {
+      this.title = '这是一个标题'
+      this.content = '这是一块内容'
+      this.cancelText = '取消'
+      this.confirmText = '确认'
+      this.isShowModal = true
+    },
+    openHiglightModal() {
+      this.title = '这是一个标题'
+      this.content = '这是一块<span style="color:red;margin: 0 4px;">高亮</span>的内容'
+      this.cancelText = '取消'
+      this.confirmText = '确认'
+      this.isShowModal = true
+    },
+    openNoTitleModal() {
+      this.content = '这是一块<span style="color:red;margin: 0 4px;">高亮</span>的内容'
+      this.cancelText = '取消'
+      this.confirmText = '确认'
+      this.isCustomTitle = true
+      this.isShowModal = true
+    },
+    openStopCancelModal() {
+      this.content = '这是一块<span style="color:red;margin: 0 4px;">高亮</span>的内容'
+      this.cancelText = '取消'
+      this.confirmText = '确认'
+      this.isStopCancel = true
+      this.isShowModal = true
+    },
+    openNoCancelModal() {
+      this.cancelText = ''
+      this.confirmText = '知道了'
+      this.title = ''
+      this.content = '这是一条通知消息'
+      this.isShowModal = true
     }
   }
 }
@@ -54,18 +95,28 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.hello {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.custom-title {
+  font-weight: bold;
+  font-size: 22px;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.btn {
+  display: block;
+  margin: 10px auto;
+  min-width: 100px;
+  cursor: pointer;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #dcdfe6;
 }
-a {
-  color: #42b983;
+.btn:hover {
+  color: #409eff;
 }
 </style>
